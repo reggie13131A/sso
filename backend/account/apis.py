@@ -62,7 +62,7 @@ class UserLoginApi(APIView):
             max_age = 60 * 60 * 24 * 7  # 例如，设置Cookie有效期为7天
             expires = now() + timedelta(seconds=max_age)
             response.set_cookie(
-                'access_token',  # Cookie的名称
+                'jwt_token',  # Cookie的名称
                 str(refresh.access_token),  # Cookie的值，这里是访问令牌
                 max_age=max_age,  # Cookie的有效期
                 httponly=True,  # 仅通过HTTP协议传输，增加安全性

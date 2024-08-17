@@ -52,6 +52,7 @@ THIRD_PARTY_APPS = [
     'corsheaders',
     'rest_framework_simplejwt',
     'rest_framework',
+    'import_export',
 ]
 
 INSTALLED_APPS = [
@@ -75,7 +76,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'base.LogRequestMiddleware.LogRequestMiddleware'
+    # 'base.LogRequestMiddleware.LogRequestMiddleware'
 ]
 
 ROOT_URLCONF = 'backend.urls'

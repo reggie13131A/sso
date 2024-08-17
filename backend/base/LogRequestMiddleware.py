@@ -18,12 +18,14 @@ class LogRequestMiddleware:
 
     def __call__(self, request):
         # 记录请求体
-        body = request.body.decode('utf-8')
-        self.logger.info(f'Request Body: {body}')
+        try:
+            body = request.body.decode('utf-8')
+                # 记录请求头
+            headers = {k: v for k, v in request.META.items() if k.startswith('HTTP_')}
+            self.logger.info(f'Request Headers: {headers}')
 
-        # 记录请求头
-        headers = {k: v for k, v in request.META.items() if k.startswith('HTTP_')}
-        self.logger.info(f'Request Headers: {headers}')
-
-        response = self.get_response(request)
-        return response
+            response = self.get_response(request)
+            self.logger.info(f'Request Body: {body}')
+            return response
+        except UnicodeDecodeError:
+            body = "Request body contains non-UTF-8 data."
