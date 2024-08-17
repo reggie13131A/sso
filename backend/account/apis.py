@@ -65,7 +65,7 @@ class UserLoginApi(APIView):
                 'access_token',  # Cookie的名称
                 str(refresh.access_token),  # Cookie的值，这里是访问令牌
                 max_age=max_age,  # Cookie的有效期
-                httponly=True,  # 仅通过HTTP协议传输，增加安全性
+                httponly=False,  
                 domain='abdn.kirisame.cc',  # 设置cookie的域名
                 # secure=True,  # 如果使用HTTPS，则设置为True
             )
