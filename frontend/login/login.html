@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login</title>
+  <link rel="stylesheet" href="./css/style.css">
+</head>
+
+<body>
+  <div class="container">
+    <div class="drop">
+      <div class="content">
+        <h2>登 录</h2>
+        <div class="form">
+          <div class="inputBox">
+            <input id="username" type="text" placeholder="用户名">
+          </div>
+          <div class="inputBox">
+            <input id="password" type="password" placeholder="密码">
+          </div>
+          <div class="inputBox">
+            <input type="submit" id="sumbitButton" value="登录">
+          </div>
+        </div>
+      </div>
+    </div>
+    <a href="#" class="btns"></a>
+    <a href="#" class="btns signup"></a>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script>
+    document.querySelector('#sumbitButton').addEventListener('click', () => {
+      // 获取输入框的值
+      const username = document.querySelector('#username').value;
+      const password = document.querySelector('#password').value;
+      axios({
+        url: 'http://sso.abdn.kirisame.cc/api/token_obtain/',
+        method: 'post',
+        data: {
+          username: username,
+          password: password
+        }
+      }).then(res => {
+        console.log(res)
+        alert(`${username}，欢迎您！`)
+        location.href = './Authoritarian.html'
+        localStorage.setItem('jwt_token', res.data.access)
+        localStorage.setItem('jwt_refresh', res.data.refresh)
+        localStorage.setItem('redirec_url', window.location.href);
+      }).catch(err => {
+        console.log(err)
+        if (err.code === 'ERR_NETWORK') {
+          alert('网络似乎出现了一点问题')
+        }
+      })
+    })
+  </script>
+</body>
+
+</html>
