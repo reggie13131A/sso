@@ -37,7 +37,8 @@
       const username = document.querySelector('#username').value;
       const password = document.querySelector('#password').value;
       axios({
-        url: 'http://sso.abdn.kirisame.cc/api/token_obtain/',
+        url: 'http://sso.abdn.kirisame.cc/api/login/',
+        // url: 'http://127.0.0.1:8000/api/login/',
         method: 'post',
         data: {
           username: username,
@@ -47,9 +48,6 @@
         console.log(res)
         alert(`${username}，欢迎您！`)
         location.href = './Authoritarian.html'
-        localStorage.setItem('jwt_token', res.data.access)
-        localStorage.setItem('jwt_refresh', res.data.refresh)
-        localStorage.setItem('redirec_url', window.location.href);
       }).catch(err => {
         console.log(err)
         if (err.code === 'ERR_NETWORK') {
