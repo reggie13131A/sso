@@ -38,42 +38,6 @@ class UserRegisterApi(APIView):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         
         # 存入cookie版本
-# class UserLoginApi(APIView):
-#     permission_classes = []
-#     def post(self, request: Request) -> Response:
-#         serializer = UserLoginSerializer(data=request.data)
-#         serializer.is_valid(raise_exception=True)
-#         try:
-#             user = get_user_model().objects.get(username=serializer.validated_data["username"])
-#         except ObjectDoesNotExist:
-#             return Response({"message": "User not registered"}, status=status.HTTP_400_BAD_REQUEST)
-        
-#         if user.check_password(serializer.validated_data["password"]):
-#             refresh = RefreshToken.for_user(user)  # 生成refresh token
-#             response = Response({
-#                 "username": user.username,
-#                 "refresh": str(refresh),
-#                 "access": str(refresh.access_token),
-#                 # 计算过期时间，这里只是示例，具体值根据你的JWT配置来定
-#                 "expire": refresh.access_token.payload["exp"] - refresh.access_token.payload["iat"],
-#             })
-
-#             # 设置访问令牌的Cookie
-#             max_age = 60 * 60 * 24 * 7  # 例如，设置Cookie有效期为7天
-#             expires = now() + timedelta(seconds=max_age)
-#             response.set_cookie(
-#                 'access_token',  # Cookie的名称
-#                 str(refresh.access_token),  # Cookie的值，这里是访问令牌
-#                 max_age=max_age,  # Cookie的有效期
-#                 httponly=True,  # 仅通过HTTP协议传输，增加安全性
-#                 # secure=True,  # 如果使用HTTPS，则设置为True
-#             )
-
-#             return response
-#         else:
-#             return Response({"message": "User login failed, please check your account password"}, status=status.HTTP_401_UNAUTHORIZED)
-
-# 不放cookie版本
 class UserLoginApi(APIView):
     permission_classes = []
     def post(self, request: Request) -> Response:
@@ -85,15 +49,52 @@ class UserLoginApi(APIView):
             return Response({"message": "User not registered"}, status=status.HTTP_400_BAD_REQUEST)
         
         if user.check_password(serializer.validated_data["password"]):
-            refresh: RefreshToken = RefreshToken.for_user(user)  # 生成refresh token
-            return Response({
+            refresh = RefreshToken.for_user(user)  # 生成refresh token
+            response = Response({
                 "username": user.username,
                 "refresh": str(refresh),
                 "access": str(refresh.access_token),
+                # 计算过期时间，这里只是示例，具体值根据你的JWT配置来定
                 "expire": refresh.access_token.payload["exp"] - refresh.access_token.payload["iat"],
             })
+
+            # 设置访问令牌的Cookie
+            max_age = 60 * 60 * 24 * 7  # 例如，设置Cookie有效期为7天
+            expires = now() + timedelta(seconds=max_age)
+            response.set_cookie(
+                'access_token',  # Cookie的名称
+                str(refresh.access_token),  # Cookie的值，这里是访问令牌
+                max_age=max_age,  # Cookie的有效期
+                httponly=True,  # 仅通过HTTP协议传输，增加安全性
+                domain='abdn.kirisame.cc',  # 设置cookie的域名
+                # secure=True,  # 如果使用HTTPS，则设置为True
+            )
+
+            return response
         else:
-            return Response({"message": "User login failed, please check your account password"})
+            return Response({"message": "User login failed, please check your account password"}, status=status.HTTP_401_UNAUTHORIZED)
+
+# 不放cookie版本
+# class UserLoginApi(APIView):
+#     permission_classes = []
+#     def post(self, request: Request) -> Response:
+#         serializer = UserLoginSerializer(data=request.data)
+#         serializer.is_valid(raise_exception=True)
+#         try:
+#             user = get_user_model().objects.get(username=serializer.validated_data["username"])
+#         except ObjectDoesNotExist:
+#             return Response({"message": "User not registered"}, status=status.HTTP_400_BAD_REQUEST)
+        
+#         if user.check_password(serializer.validated_data["password"]):
+#             refresh: RefreshToken = RefreshToken.for_user(user)  # 生成refresh token
+#             return Response({
+#                 "username": user.username,
+#                 "refresh": str(refresh),
+#                 "access": str(refresh.access_token),
+#                 "expire": refresh.access_token.payload["exp"] - refresh.access_token.payload["iat"],
+#             })
+#         else:
+#             return Response({"message": "User login failed, please check your account password"})
 
 # 检查手机号码是否正确
 class checkphoneApi(APIView):
