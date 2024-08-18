@@ -1,6 +1,5 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as DjangoUserAdmin
-from django.http import HttpResponse
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth.models import Group
 from django.contrib.auth.admin import GroupAdmin as DjangoGroupAdmin
@@ -30,7 +29,7 @@ class CustomUserAdmin(ImportExportModelAdmin, DjangoUserAdmin):
         ),
         (_("Important dates"), {"fields": ("last_login", "date_joined")}),
     )
-    list_display = ("username", "email")
+    list_display = ("username", "name")
     actions = ['delete_selected']  # Ensure bulk delete is enabled
 
 class GroupProxy(Group):

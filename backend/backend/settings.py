@@ -27,7 +27,7 @@ SECRET_KEY = os.environ.get(
     'django-insecure-k4^s#n*^xq7*fp((*7*(kt@1-s4h46jq3wib-v(pil!a2l2)#1'
 )
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get("DEBUG", True)
 
 ALLOWED_HOSTS = [
     "sso.abdn.kirisame.cc",
@@ -102,8 +102,7 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
-
-if DEBUG:
+if not DEBUG:
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
@@ -178,9 +177,8 @@ from base.email_inf import *
 AUTH_USER_MODEL = 'account.CustomUser'
 
 STATIC_ROOT = os.environ.get("STATIC_ROOT", None)
-print(STATIC_ROOT)
 SECURE_CROSS_ORIGIN_OPENER_POLICY = 'None'
-
+IMPORT_EXPORT_USE_TRANSACTIONS = True
 
 # django内部日志设置
 BASE_LOG_DIR = os.path.join(BASE_DIR, "logs")

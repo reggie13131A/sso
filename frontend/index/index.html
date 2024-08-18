@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="./css/index.css" />
+  <title>首页</title>
+</head>
+
+<body>
+  <img id="leftSVG" src="./img/reshot-illustration-music-player-9HNTU6VQ5B.svg" alt="">
+  <div class="container">
+    <div class="navbar">
+    </div>
+    <!-- 在row上面进行编排 -->
+    <div class="row">
+      <!-- 这里应该来一个svg，然后让标题的index比它高 -->
+      <div class="col col1">
+        <h1>WELCOME！</h1>
+        <h2><span>欢迎您</span>，这里是首页</h2>
+        <button type="button">LEARN MORE</button>
+      </div>
+      <div class="col col2">
+        <div class="card" id="card1">
+          <h2>综测系统</h2>
+        </div>
+        <div class="card" id="card2">
+          <h2 style="color: whitesmoke;">签到系统</h2>
+        </div>
+        <div class="card" id="card3">
+          <h2 style="color: whitesmoke;">场地预约</h2>
+        </div>
+        <div class="card" id="card4">
+          <h2 style="color: whitesmoke;">图书管理</h2>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+    document.querySelector("#card1").addEventListener("click", function () {
+      // 跳转到新的页面
+      window.location.href = "http://cesys.abdn.kirisame.cc/";
+    });
+    document.querySelector("#card2").addEventListener("click", function () {
+      // 跳转到新的页面
+      window.location.href = "http://singin.abdn.kirisame.cc/";
+    });
+    document.querySelector("#card3").addEventListener("click", function () {
+      // 跳转到新的页面
+      window.location.href = "http://officehour.abdn.kirisame.cc/";
+    });
+    document.querySelector("#card4").addEventListener("click", function () {
+      // 跳转到新的页面
+      window.location.href = "http://library.abdn.kirisame.cc/";
+    });
+  </script>
+</body>
+
+</html>
