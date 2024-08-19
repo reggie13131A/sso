@@ -19,29 +19,23 @@
             <p></p>
         </div>
         <div class="modal__footer modal__footer--2-col">
-            <a href="#" class="modal__button" data-text="返回上级" id='cancel' data-modal-close></a>
+            <a href="#" class="modal__button" data-text="切换账号" id='cancel' data-modal-close></a>
             <a href="#" class="modal__button" data-text="确认授权" id="confirm" data-modal-close></a>
         </div>
     </div>
+    <a href="./password/resetPassword.html" id="reset" data-modal-close>修改密码</a>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script>
+        const token = document.cookie.split('=')[1]; // 假设cookie的结构是name=value，这里取value部分
+        const url = 'http://sso.abdn.kirisame.cc/api/token_verify/';
+        const confirm = document.querySelector('#confirm');
+        confirm.addEventListener('click', () => {
+            alert('登陆成功')
+        })
         document.querySelector('#cancel').addEventListener('click', () => {
             const redirectUrl = localStorage.getItem('redirectUrl')
             location.href = redirectUrl
             localStorage.removeItem('redirectUrl')
-        })
-        document.querySelector('#confirm').addEventListener('click', () => {
-            axios({
-                url: 'http://127.0.0.1:8080/api/token_verify/',
-                method: 'post',
-                parms: {
-                    token: localStorage.getItem('token')
-                }
-            }).then(res => {
-                console.log(res)
-                alert(`${username}，欢迎您！`)
-                location.href = '#'
-            })
         })
     </script>
 </body>
