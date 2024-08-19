@@ -26,20 +26,10 @@
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script>
         document.querySelector('#cancel').addEventListener('click', () => {
-            location.href = 'http://sso.abdn.kirisame.cc/api/login/'
+            location.href = 'http://sso.abdn.kirisame.cc/officehour/login/'
         })
         document.querySelector('#confirm').addEventListener('click', () => {
-            axios({
-                url: 'http://officehour.abdn.kirisame.cc',
-                method: 'get',
-                // parms: {
-                //     token: localStorage.getItem('token')
-                // }
-            }).then(res => {
-                console.log(res)
-                alert(`${username}，欢迎您！`)
-                location.href = '#'
-            })
+             location.href = 'http://officehour.abdn.kirisame.cc'
         })
     </script>
 </body>

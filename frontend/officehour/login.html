@@ -30,32 +30,33 @@
     <a href="#" class="btns"></a>
     <a href="#" class="btns signup"></a>
   </div>
-  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
   <script>
-    // import axios from 'axios';
     document.querySelector('#sumbitButton').addEventListener('click', () => {
-      // 获取输入框的值
       const username = document.querySelector('#username').value;
       const password = document.querySelector('#password').value;
-      axios({
-        url: 'http://sso.abdn.kirisame.cc/api/login/',
-        // url: 'http://127.0.0.1:8000/api/login/',
-        method: 'post',
-        data: {
+
+      // 使用fetch发送POST请求
+      fetch('http://sso.abdn.kirisame.cc/api/login/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
           username: username,
           password: password
+        })
+      }).then(response => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
         }
-      }).then(res => {
-        console.log(res)
-        alert(`${username}，欢迎您！`)
-        location.href = './Authoritarian.html'
+        console.log(response);
+      }).then(data => {
+        console.log(data)
+        location.href = './Authoritarian.html';
       }).catch(err => {
-        console.log(err)
-        if (err.code === 'ERR_NETWORK') {
-          alert('网络似乎出现了一点问题')
-        }
-      })
-    })
+        console.error(err);
+      });
+    });
   </script>
 </body>
 
