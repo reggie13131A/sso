@@ -12,10 +12,9 @@
     <div class="open-modal" data-modal-open="modal-notification">Open Modal</div>
     <div class="modal modal-notification" data-modal>
         <div class="modal__content">
-            <p class="is-light has-extra-margin-bottom">Message from <a
-                    href="http://www.example.com">http://www.example.com</a></p>
+            <p class="is-light has-extra-margin-bottom">Message from <a href="http://sso.abdn.kirisame.cc/api/login/">统一验证登录系统</a></p>
             <p style="letter-spacing: 1px;">欢迎您！</p>
-            <p>您正在登录http://www.example.com，您确认要授权吗？</p>
+            <p>您正在登录综测系统，您确认要授权吗？</p>
             <p></p>
         </div>
         <div class="modal__footer modal__footer--2-col">
@@ -26,22 +25,10 @@
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script>
         document.querySelector('#cancel').addEventListener('click', () => {
-            const redirectUrl = localStorage.getItem('redirectUrl')
-            location.href = redirectUrl
-            localStorage.removeItem('redirectUrl')
+            location.href = 'http://sso.abdn.kirisame.cc/cesys/login/'
         })
         document.querySelector('#confirm').addEventListener('click', () => {
-            axios({
-                url: 'http://127.0.0.1:8080/api/token_verify/',
-                method: 'post',
-                parms: {
-                    token: localStorage.getItem('token')
-                }
-            }).then(res => {
-                console.log(res)
-                alert(`${username}，欢迎您！`)
-                location.href = '#'
-            })
+             location.href = 'http://cesys.abdn.kirisame.cc'
         })
     </script>
 </body>
