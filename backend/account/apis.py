@@ -1,6 +1,6 @@
 from .models import CustomUser
 from .serializers import modifyPhoneSerializer,modifyEmailSerializer,modifyPasswordSerializer,UserLoginSerializer,UserSerializer,IsPasswordSerializer,ResetSerializer,modifyNameSerializer
-from .serializers import modifyGenderSerializer,userInfoSerializer,CheckPhoneSerializer
+from .serializers import modifyGenderSerializer,userInfoSerializer,CheckPhoneSerializer,CustomTokenObtainPairSerializer
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -16,6 +16,11 @@ from django.utils import timezone
 from base import email_inf
 from django.utils.timezone import now
 from datetime import timedelta
+from rest_framework_simplejwt.views import TokenObtainPairView
+
+class CustomTokenObtainPairView(TokenObtainPairView):
+    serializer_class = CustomTokenObtainPairSerializer
+
 
 class getUserInfoApi(APIView):
     permission_classes = [IsAuthenticated]
@@ -40,6 +45,7 @@ class UserRegisterApi(APIView):
         # 存入cookie版本
 class UserLoginApi(APIView):
     permission_classes = []
+
     def post(self, request: Request) -> Response:
         serializer = UserLoginSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -49,21 +55,25 @@ class UserLoginApi(APIView):
             return Response({"message": "User not registered"}, status=status.HTTP_400_BAD_REQUEST)
         
         if user.check_password(serializer.validated_data["password"]):
-            refresh = RefreshToken.for_user(user)  # 生成refresh token
+            refresh = RefreshToken.for_user(user)
+            
+            # 使用自定义的TokenObtainPairSerializer生成token
+            custom_token_serializer = CustomTokenObtainPairSerializer()
+            token = custom_token_serializer.get_token(user)
+
             response = Response({
                 "username": user.username,
                 "refresh": str(refresh),
-                "access": str(refresh.access_token),
-                # 计算过期时间，这里只是示例，具体值根据你的JWT配置来定
-                "expire": refresh.access_token.payload["exp"] - refresh.access_token.payload["iat"],
+                "access": str(token.access_token),
+                "expire": token.access_token.payload["exp"] - token.access_token.payload["iat"],
             })
 
             # 设置访问令牌的Cookie
-            max_age = 60 * 60 * 24 * 7  # 例如，设置Cookie有效期为7天
+            max_age = 60 * 60 * 24 * 1   # 设置Cookie有效期为1天
             expires = now() + timedelta(seconds=max_age)
             response.set_cookie(
                 'jwt_token',  # Cookie的名称
-                str(refresh.access_token),  # Cookie的值，这里是访问令牌
+                str(token.access_token),  # Cookie的值，这里是访问令牌
                 max_age=max_age,  # Cookie的有效期
                 httponly=False,  
                 domain='abdn.kirisame.cc',  # 设置cookie的域名
@@ -74,27 +84,6 @@ class UserLoginApi(APIView):
         else:
             return Response({"message": "User login failed, please check your account password"}, status=status.HTTP_401_UNAUTHORIZED)
 
-# 不放cookie版本
-# class UserLoginApi(APIView):
-#     permission_classes = []
-#     def post(self, request: Request) -> Response:
-#         serializer = UserLoginSerializer(data=request.data)
-#         serializer.is_valid(raise_exception=True)
-#         try:
-#             user = get_user_model().objects.get(username=serializer.validated_data["username"])
-#         except ObjectDoesNotExist:
-#             return Response({"message": "User not registered"}, status=status.HTTP_400_BAD_REQUEST)
-        
-#         if user.check_password(serializer.validated_data["password"]):
-#             refresh: RefreshToken = RefreshToken.for_user(user)  # 生成refresh token
-#             return Response({
-#                 "username": user.username,
-#                 "refresh": str(refresh),
-#                 "access": str(refresh.access_token),
-#                 "expire": refresh.access_token.payload["exp"] - refresh.access_token.payload["iat"],
-#             })
-#         else:
-#             return Response({"message": "User login failed, please check your account password"})
 
 # 检查手机号码是否正确
 class checkphoneApi(APIView):
