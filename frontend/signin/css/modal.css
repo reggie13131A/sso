@@ -158,3 +158,48 @@ a:hover {
     top: 50%;
     z-index: 5;
 }
+
+#reset {
+    position: absolute;
+    right: 20%;
+    top: 60%;
+    width: 135px;
+    height: 135px;
+    width: 135px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    text-decoration: none;
+    color: gray;
+    line-height: 1.2em;
+    letter-spacing: 0.05em;
+    font-size: 1.4rem;
+    font-weight: bold;
+    transition: 0.25s;
+    text-align: center;
+    box-shadow: inset 10px 10px 10px rgba(0, 0, 0, .05),
+        15px 25px 10px rgba(0, 1, 0, .1),
+        15px 20px 20px rgba(0, 0, 0, .1),
+        inset -10px -10px 15px rgba(255, 255, 255, 0.5);
+    border-radius: 44% 56% 65% 35% / 57% 58% 42% 43%;
+}
+
+#reset:hover {
+    border-radius: 50%;
+    background-color: #fff;
+    color: #666666;
+    transform: scale(1.1);
+}
+
+#reset::before {
+    content: '';
+    position: absolute;
+    top: 15px;
+    left: 30px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background-color: #fff;
+    opacity: 0.45;
+}
