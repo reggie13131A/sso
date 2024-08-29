@@ -154,22 +154,34 @@ class ResetPasswordApi(APIView):
         else :
             return Response({"The user name does not exist"},status=status.HTTP_400_BAD_REQUEST)
 
+# 普通修改密码
 class modifyPasswordApi(APIView):
     permission_classes = [IsAuthenticated]
-    def post(self,request:Request) -> Response:
+
+    def post(self, request: Request) -> Response:
         serializer = modifyPasswordSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
+        
+        # 获取用户
         username = request.user.username
-        if get_user_model().objects.get(username=username):
-            user = get_user_model().objects.get(username=username)
-            if user.check_password(serializer.validated_data['old_password']):
-                user.set_password(serializer.validated_data['password'])
-                user.save()
-                return Response({
-                    f"Your password has been changed successfully. Please log in again"
-                })
-        return Response({"The user name does not exist"},status=status.HTTP_400_BAD_REQUEST)
+        user = get_user_model().objects.get(username=username)
+        
+        # 检查新密码长度
+        new_password = serializer.validated_data['password']
+        if len(new_password) < 6:
+            return Response({"error": "The new password must be longer than 6 characters."},
+                            status=status.HTTP_400_BAD_REQUEST)
 
+        # 验证旧密码
+        if user.check_password(serializer.validated_data['old_password']):
+            # 设置新密码
+            user.set_password(new_password)
+            user.save()
+            return Response({"message": "Your password has been changed successfully. Please log in again."})
+        
+        # 如果旧密码不匹配或用户不存在
+        return Response({"error": "The old password is incorrect or the user does not exist."},
+                        status=status.HTTP_400_BAD_REQUEST)
 # class modifyPhoneApi(APIView):
 #     permission_classes = []
 #     def post(self, request: Request) -> Response:
