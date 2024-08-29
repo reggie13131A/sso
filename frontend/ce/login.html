@@ -37,11 +37,6 @@
       // 获取输入框的值
       const username = document.querySelector('#username').value;
       const password = document.querySelector('#password').value;
-      // 如果密码的长度小于6，则提示错误
-      if (password.length < 6) {
-        alert('密码长度不能小于6位');
-        return;
-      }
       fetch('http://sso.abdn.kirisame.cc/api/login/', {
         method: 'POST',
         headers: {

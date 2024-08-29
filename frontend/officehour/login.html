@@ -34,10 +34,6 @@
     document.querySelector('#sumbitButton').addEventListener('click', () => {
       const username = document.querySelector('#username').value;
       const password = document.querySelector('#password').value;
-      if (password.length < 6) {
-        alert('密码长度不能小于6位');
-        return;
-      }
       // 使用fetch发送POST请求
       fetch('http://sso.abdn.kirisame.cc/api/login/', {
         method: 'POST',
