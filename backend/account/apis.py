@@ -77,6 +77,7 @@ class UserLoginApi(APIView):
                 max_age=max_age,  # Cookie的有效期
                 httponly=False,  
                 domain='abdn.kirisame.cc',  # 设置cookie的域名
+                # domain='127.0.0.1',
                 # secure=True,  # 如果使用HTTPS，则设置为True
             )
 
