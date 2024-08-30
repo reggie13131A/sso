@@ -60,11 +60,13 @@ class UserLoginApi(APIView):
             # 使用自定义的TokenObtainPairSerializer生成token
             custom_token_serializer = CustomTokenObtainPairSerializer()
             token = custom_token_serializer.get_token(user)
-
+                    # 根据邮箱是否为空设置checknum的值
+            checknull = 1001 if not user.email else 1002
             response = Response({
                 "username": user.username,
                 "refresh": str(refresh),
                 "access": str(token.access_token),
+                "checknull":checknull,
                 "expire": token.access_token.payload["exp"] - token.access_token.payload["iat"],
             })
 
