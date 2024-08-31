@@ -60,30 +60,49 @@ class UserLoginApi(APIView):
             # 使用自定义的TokenObtainPairSerializer生成token
             custom_token_serializer = CustomTokenObtainPairSerializer()
             token = custom_token_serializer.get_token(user)
-                    # 根据邮箱是否为空设置checknum的值
-            checknull = 1001 if not user.email else 1002
-            response = Response({
-                "username": user.username,
-                "refresh": str(refresh),
-                "access": str(token.access_token),
-                "checknull":checknull,
-                "expire": token.access_token.payload["exp"] - token.access_token.payload["iat"],
-            })
+            # 根据邮箱是否为空设置status的值
+            if not user.email :
+                response = Response({
+                    "username": user.username,
+                    "refresh": str(refresh),
+                    "access": str(token.access_token),
+                    "expire": token.access_token.payload["exp"] - token.access_token.payload["iat"],
+                },status=520)
 
-            # 设置访问令牌的Cookie
-            max_age = 60 * 60 * 24 * 1   # 设置Cookie有效期为1天
-            expires = now() + timedelta(seconds=max_age)
-            response.set_cookie(
-                'jwt_token',  # Cookie的名称
-                str(token.access_token),  # Cookie的值，这里是访问令牌
-                max_age=max_age,  # Cookie的有效期
-                httponly=False,  
-                domain='abdn.kirisame.cc',  # 设置cookie的域名
-                # domain='127.0.0.1',
-                # secure=True,  # 如果使用HTTPS，则设置为True
-            )
+                # 设置访问令牌的Cookie
+                max_age = 60 * 60 * 24 * 1   # 设置Cookie有效期为1天
+                expires = now() + timedelta(seconds=max_age)
+                response.set_cookie(
+                    'jwt_token',  # Cookie的名称
+                    str(token.access_token),  # Cookie的值，这里是访问令牌
+                    max_age=max_age,  # Cookie的有效期
+                    httponly=False,  
+                    domain='abdn.kirisame.cc',  # 设置cookie的域名
+                    # domain='127.0.0.1',
+                    # secure=True,  # 如果使用HTTPS，则设置为True
+                )
 
-            return response
+                return response
+            else:
+                response = Response({
+                    "username": user.username,
+                    "refresh": str(refresh),
+                    "access": str(token.access_token),
+                    "expire": token.access_token.payload["exp"] - token.access_token.payload["iat"],
+                })
+                # 设置访问令牌的Cookie
+                max_age = 60 * 60 * 24 * 1   # 设置Cookie有效期为1天
+                expires = now() + timedelta(seconds=max_age)
+                response.set_cookie(
+                    'jwt_token',  # Cookie的名称
+                    str(token.access_token),  # Cookie的值，这里是访问令牌
+                    max_age=max_age,  # Cookie的有效期
+                    httponly=False,  
+                    domain='abdn.kirisame.cc',  # 设置cookie的域名
+                    # domain='127.0.0.1',
+                    # secure=True,  # 如果使用HTTPS，则设置为True
+                )
+                return response
         else:
             return Response({"message": "User login failed, please check your account password"}, status=status.HTTP_401_UNAUTHORIZED)
 
