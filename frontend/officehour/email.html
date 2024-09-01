@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="./css/style.css">
+</head>
+
+<body>
+    <div class="container">
+        <div class="drop">
+            <div class="content">
+                <h2>添加邮箱</h2>
+                <div class="form">
+                    <div class="inputBox">
+                        <input id="email" type="text" placeholder="邮 箱">
+                    </div>
+                    <div class="inputBox">
+                        <input type="submit" id="sumbitButton" value="提 交">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <a href="" class="btns" style="font-size: 1.5rem; font-weight: bold;">返回登陆</a>
+        <a href="" class="btns signup"></a>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+        document.querySelector('#sumbitButton').addEventListener('click', () => {
+            // 获取输入框的值
+            const email = document.querySelector('#email').value;
+            if (!email) {
+                alert('请先输入邮箱！');
+                return;
+            }
+            fetch('http://sso.abdn.kirisame.cc/api/modify/email/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${document.cookie.split('=')[1]}`
+                },
+                body: JSON.stringify({
+                    email: email
+                })
+            }).then(response => {
+                // 只有响应状态码为200才可以进入
+                console.log(response);
+                if (response.status == 200) {
+                    alert('邮箱修改成功！');
+                    location.href = './login.html';
+                } else if (!response.ok && response.status == '500') {
+                    alert('服务器似乎出了问题，请稍后重试')
+                    return;
+                } else if (response.status == '400' || response.status == '401') {
+                    alert('令牌过期，请重新登录！');
+                    location.href = './login.html';
+                    return
+                } else {
+                    alert('未知错误，请稍后重试');
+                    return
+                }
+            }).catch(err => {
+                alert("用户名或密码错误");
+                console.error(err);
+            });
+        })
+    </script>
+</body>
+
+</html>
