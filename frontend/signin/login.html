@@ -53,7 +53,7 @@
         // 只有响应状态码为200才可以进入
         console.log(response);
         if (response.status == 200) {
-          // location.href = './Authoritarian.html';
+          location.href = './Authoritarian.html';
         } else if (!response.ok && response.status == '500') {
           alert('网络似乎出了问题，请稍后重试')
           return;
