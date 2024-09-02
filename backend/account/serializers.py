@@ -110,6 +110,7 @@ class modifyEmailSerializer(serializers.Serializer):
     email= serializers.CharField(
         max_length=150,
         required=True
+        # required=False
     )
     # token=serializers.CharField(
     #     required=True
