@@ -60,27 +60,49 @@ class UserLoginApi(APIView):
             # 使用自定义的TokenObtainPairSerializer生成token
             custom_token_serializer = CustomTokenObtainPairSerializer()
             token = custom_token_serializer.get_token(user)
+            # 根据邮箱是否为空设置status的值
+            if not user.email :
+                response = Response({
+                    "username": user.username,
+                    "refresh": str(refresh),
+                    "access": str(token.access_token),
+                    "expire": token.access_token.payload["exp"] - token.access_token.payload["iat"],
+                },status=520)
 
-            response = Response({
-                "username": user.username,
-                "refresh": str(refresh),
-                "access": str(token.access_token),
-                "expire": token.access_token.payload["exp"] - token.access_token.payload["iat"],
-            })
+                # 设置访问令牌的Cookie
+                max_age = 60 * 60 * 24 * 1   # 设置Cookie有效期为1天
+                expires = now() + timedelta(seconds=max_age)
+                response.set_cookie(
+                    'jwt_token',  # Cookie的名称
+                    str(token.access_token),  # Cookie的值，这里是访问令牌
+                    max_age=max_age,  # Cookie的有效期
+                    httponly=False,  
+                    domain='abdn.kirisame.cc',  # 设置cookie的域名
+                    # domain='127.0.0.1',
+                    # secure=True,  # 如果使用HTTPS，则设置为True
+                )
 
-            # 设置访问令牌的Cookie
-            max_age = 60 * 60 * 24 * 1   # 设置Cookie有效期为1天
-            expires = now() + timedelta(seconds=max_age)
-            response.set_cookie(
-                'jwt_token',  # Cookie的名称
-                str(token.access_token),  # Cookie的值，这里是访问令牌
-                max_age=max_age,  # Cookie的有效期
-                httponly=False,  
-                domain='abdn.kirisame.cc',  # 设置cookie的域名
-                # secure=True,  # 如果使用HTTPS，则设置为True
-            )
-
-            return response
+                return response
+            else:
+                response = Response({
+                    "username": user.username,
+                    "refresh": str(refresh),
+                    "access": str(token.access_token),
+                    "expire": token.access_token.payload["exp"] - token.access_token.payload["iat"],
+                })
+                # 设置访问令牌的Cookie
+                max_age = 60 * 60 * 24 * 1   # 设置Cookie有效期为1天
+                expires = now() + timedelta(seconds=max_age)
+                response.set_cookie(
+                    'jwt_token',  # Cookie的名称
+                    str(token.access_token),  # Cookie的值，这里是访问令牌
+                    max_age=max_age,  # Cookie的有效期
+                    httponly=False,  
+                    domain='abdn.kirisame.cc',  # 设置cookie的域名
+                    # domain='127.0.0.1',
+                    # secure=True,  # 如果使用HTTPS，则设置为True
+                )
+                return response
         else:
             return Response({"message": "User login failed, please check your account password"}, status=status.HTTP_401_UNAUTHORIZED)
 
@@ -154,22 +176,34 @@ class ResetPasswordApi(APIView):
         else :
             return Response({"The user name does not exist"},status=status.HTTP_400_BAD_REQUEST)
 
+# 普通修改密码
 class modifyPasswordApi(APIView):
     permission_classes = [IsAuthenticated]
-    def post(self,request:Request) -> Response:
+
+    def post(self, request: Request) -> Response:
         serializer = modifyPasswordSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
+        
+        # 获取用户
         username = request.user.username
-        if get_user_model().objects.get(username=username):
-            user = get_user_model().objects.get(username=username)
-            if user.check_password(serializer.validated_data['old_password']):
-                user.set_password(serializer.validated_data['password'])
-                user.save()
-                return Response({
-                    f"Your password has been changed successfully. Please log in again"
-                })
-        return Response({"The user name does not exist"},status=status.HTTP_400_BAD_REQUEST)
+        user = get_user_model().objects.get(username=username)
+        
+        # 检查新密码长度
+        new_password = serializer.validated_data['password']
+        if len(new_password) < 6:
+            return Response({"error": "The new password must be longer than 6 characters."},
+                            status=status.HTTP_400_BAD_REQUEST)
 
+        # 验证旧密码
+        if user.check_password(serializer.validated_data['old_password']):
+            # 设置新密码
+            user.set_password(new_password)
+            user.save()
+            return Response({"message": "Your password has been changed successfully. Please log in again."})
+        
+        # 如果旧密码不匹配或用户不存在
+        return Response({"error": "The old password is incorrect or the user does not exist."},
+                        status=status.HTTP_400_BAD_REQUEST)
 # class modifyPhoneApi(APIView):
 #     permission_classes = []
 #     def post(self, request: Request) -> Response:

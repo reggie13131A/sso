@@ -10,7 +10,7 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
 
         # 添加自定义字段到载荷
         token['username'] = user.username
-
+        token['name']=user.name
         return token
 
 class UserSerializer(serializers.ModelSerializer):
